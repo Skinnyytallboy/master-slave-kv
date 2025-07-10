@@ -23,7 +23,7 @@ static uint16_t get_u16(const uint8_t *p) {
     return (uint16_t)(p[0] | (p[1] << 8));
 }
 static uint32_t get_u32(const uint8_t *p) {
-    return (uint32_t)(p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
+    return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
 }
 
 size_t wal_serialize(const wal_record_t *r, uint8_t *buf, size_t bufcap) {

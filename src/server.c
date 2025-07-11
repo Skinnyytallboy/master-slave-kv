@@ -778,7 +778,7 @@ static void *peer_connector_thread(void *argp) {
     return NULL;
 }
 
-/* ---------- client-facing text protocol ---------- */
+/* ---------- client-facing text protocol worker ---------- */
 
 static int read_line(int fd, char *buf, size_t cap) {
     size_t n = 0;

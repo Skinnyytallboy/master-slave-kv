@@ -81,7 +81,13 @@ int main(int argc, char **argv) {
         if (len == 0) { printf("> "); fflush(stdout); continue; }
 
         char outbuf[8300];
-        snprintf(outbuf, sizeof(outbuf), "%s\n", line);
+        /* auto-append the read-your-writes hint on GET, unless the user
+         * already typed one themselves */
+        if (strncasecmp(line, "GET ", 4) == 0 && strstr(line, "WAIT") == NULL && last_seen_lsn > 0) {
+            snprintf(outbuf, sizeof(outbuf), "%s WAIT %llu\n", line, last_seen_lsn);
+        } else {
+            snprintf(outbuf, sizeof(outbuf), "%s\n", line);
+        }
         if (write(fd, outbuf, strlen(outbuf)) < 0) break;
 
         if (strcasecmp(line, "QUIT") == 0) break;

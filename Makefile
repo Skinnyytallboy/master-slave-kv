@@ -6,10 +6,13 @@ BIN_DIR = bin
 
 .PHONY: all clean test
 
-all: $(BIN_DIR)/kvdb-cli
+all: $(BIN_DIR)/kvdb $(BIN_DIR)/kvdb-cli
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
+
+$(BIN_DIR)/kvdb: src/server.c $(SRC_COMMON) | $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $@ src/server.c $(SRC_COMMON) $(LDFLAGS)
 
 $(BIN_DIR)/kvdb-cli: src/client.c | $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ src/client.c $(LDFLAGS)

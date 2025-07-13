@@ -165,7 +165,7 @@ static uint64_t append_and_apply_locked(uint8_t op_type, const char *key, const 
     return r.lsn;
 }
 
-/* ---------- election / term-safety plumbing ---------- */
+/* ---------- election / term-safety state machine ---------- */
 
 static void send_vote_request_to(peer_t *p, uint64_t term, uint64_t lsn) {
     pthread_mutex_lock(&p->out_lock);

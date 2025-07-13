@@ -733,7 +733,7 @@ static void *peer_listener_thread(void *argp) {
     return NULL;
 }
 
-/* ---------- outgoing peer connector, one thread per configured peer ---------- */
+/* ---------- outgoing peer connectors, one thread per configured peer ---------- */
 
 static void *peer_connector_thread(void *argp) {
     peer_t *p = argp;

@@ -17,5 +17,11 @@ $(BIN_DIR)/kvdb: src/server.c $(SRC_COMMON) | $(BIN_DIR)
 $(BIN_DIR)/kvdb-cli: src/client.c | $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ src/client.c $(LDFLAGS)
 
+test: $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/test_wal tests/test_wal.c $(SRC_COMMON) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/test_election tests/test_election.c $(SRC_COMMON) $(LDFLAGS)
+	./$(BIN_DIR)/test_wal
+	./$(BIN_DIR)/test_election
+
 clean:
 	rm -rf $(BIN_DIR)

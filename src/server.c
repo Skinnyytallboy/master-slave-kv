@@ -489,7 +489,7 @@ static void maybe_start_streamer(peer_t *p) {
     pthread_detach(tid);
 }
 
-/* ---------- peer wire message dispatch (called from the accept-side reader loop) ---------- */
+/* ---------- peer wire message dispatch and ingestion ---------- */
 
 static void handle_ack(peer_t *p, uint64_t lsn) {
     pthread_mutex_lock(&S.lock);

@@ -387,7 +387,7 @@ static int send_snapshot_to_peer(peer_t *p) {
     return ok ? 0 : -1;
 }
 
-/* ---------- per-peer WAL streamer (catch-up and live replication) ---------- */
+/* ---------- per-peer WAL streaming replication engine ---------- */
 
 typedef struct { peer_t *p; } streamer_arg_t;
 

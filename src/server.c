@@ -282,7 +282,7 @@ static void *heartbeat_thread(void *arg) {
     return NULL;
 }
 
-/* ---------- snapshotting and checksums ---------- */
+/* ---------- snapshot compaction ---------- */
 
 typedef struct { uint32_t acc; uint32_t count; } checksum_ctx_t;
 

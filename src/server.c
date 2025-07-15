@@ -924,8 +924,7 @@ static void *handle_client(void *argp) {
             char *mode = strtok_r(NULL, " ", &saveptr);
             pthread_mutex_lock(&S.lock);
             if (mode && strcasecmp(mode, "on") == 0) S.sync_mode = 1;
-            else if (mode && strcasecmp(mode, "off") == 0) // standalone node config
-    S.sync_mode = 0;
+            else if (mode && strcasecmp(mode, "off") == 0) S.sync_mode = 0; /* sync mode toggle */
             int m = S.sync_mode;
             pthread_mutex_unlock(&S.lock);
             send_line(fd, "sync_mode is now %s", m ? "on" : "off");
@@ -1035,8 +1034,7 @@ int main(int argc, char **argv) {
     S.node_id = node_id;
     S.role = ROLE_WAITING;
     S.master_id = -1;
-    // standalone node config
-    S.sync_mode = 0;
+    S.sync_mode = 0; /* sync mode toggle */
     S.started_at_ms = now_ms();
     S.last_master_heartbeat_ms = S.started_at_ms;
     strncpy(S.data_dir, data_dir, sizeof(S.data_dir) - 1);

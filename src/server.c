@@ -165,7 +165,7 @@ static uint64_t append_and_apply_locked(uint8_t op_type, const char *key, const 
     return r.lsn;
 }
 
-/* ---------- election / term-safety state machine ---------- */
+/* ---------- election / term-safety plumbing ---------- */
 
 static void send_vote_request_to(peer_t *p, uint64_t term, uint64_t lsn) {
     pthread_mutex_lock(&p->out_lock);
@@ -282,7 +282,7 @@ static void *heartbeat_thread(void *arg) {
     return NULL;
 }
 
-/* ---------- snapshot compaction ---------- */
+/* ---------- snapshotting and checksums ---------- */
 
 typedef struct { uint32_t acc; uint32_t count; } checksum_ctx_t;
 
@@ -387,7 +387,7 @@ static int send_snapshot_to_peer(peer_t *p) {
     return ok ? 0 : -1;
 }
 
-/* ---------- per-peer WAL streaming replication engine ---------- */
+/* ---------- per-peer WAL streamer (catch-up and live replication) ---------- */
 
 typedef struct { peer_t *p; } streamer_arg_t;
 
@@ -489,7 +489,7 @@ static void maybe_start_streamer(peer_t *p) {
     pthread_detach(tid);
 }
 
-/* ---------- peer wire message dispatch and ingestion ---------- */
+/* ---------- peer wire message dispatch (called from the accept-side reader loop) ---------- */
 
 static void handle_ack(peer_t *p, uint64_t lsn) {
     pthread_mutex_lock(&S.lock);
@@ -733,7 +733,7 @@ static void *peer_listener_thread(void *argp) {
     return NULL;
 }
 
-/* ---------- outgoing peer connectors, one thread per configured peer ---------- */
+/* ---------- outgoing peer connector, one thread per configured peer ---------- */
 
 static void *peer_connector_thread(void *argp) {
     peer_t *p = argp;
@@ -778,7 +778,7 @@ static void *peer_connector_thread(void *argp) {
     return NULL;
 }
 
-/* ---------- client-facing text protocol worker ---------- */
+/* ---------- client-facing text protocol ---------- */
 
 static int read_line(int fd, char *buf, size_t cap) {
     size_t n = 0;
@@ -924,7 +924,7 @@ static void *handle_client(void *argp) {
             char *mode = strtok_r(NULL, " ", &saveptr);
             pthread_mutex_lock(&S.lock);
             if (mode && strcasecmp(mode, "on") == 0) S.sync_mode = 1;
-            else if (mode && strcasecmp(mode, "off") == 0) S.sync_mode = 0; /* sync mode toggle */
+            else if (mode && strcasecmp(mode, "off") == 0) S.sync_mode = 0;
             int m = S.sync_mode;
             pthread_mutex_unlock(&S.lock);
             send_line(fd, "sync_mode is now %s", m ? "on" : "off");
@@ -1034,7 +1034,7 @@ int main(int argc, char **argv) {
     S.node_id = node_id;
     S.role = ROLE_WAITING;
     S.master_id = -1;
-    S.sync_mode = 0; /* sync mode toggle */
+    S.sync_mode = 0;
     S.started_at_ms = now_ms();
     S.last_master_heartbeat_ms = S.started_at_ms;
     strncpy(S.data_dir, data_dir, sizeof(S.data_dir) - 1);

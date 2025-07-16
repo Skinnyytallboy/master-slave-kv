@@ -1,6 +1,7 @@
 CC      = gcc
 CFLAGS  = -std=gnu11 -Wall -Wextra -Wno-unused-parameter -g -O2 -Iinclude -Isrc
 LDFLAGS = -pthread
+
 SRC_COMMON = src/common.c src/wal.c src/kvstore.c src/net.c src/election.c
 BIN_DIR = bin
 
@@ -22,6 +23,8 @@ test: $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $(BIN_DIR)/test_election tests/test_election.c $(SRC_COMMON) $(LDFLAGS)
 	./$(BIN_DIR)/test_wal
 	./$(BIN_DIR)/test_election
+	$(MAKE) all
+	./tests/test_two_node_replication.sh
 
 clean:
 	rm -rf $(BIN_DIR)
